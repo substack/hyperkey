@@ -5,7 +5,7 @@ module.exports = function (html, cb, _exists) {
         if (_exists && _exists(row)) return;
         var key = row.key;
         
-        var res = cb(row.value);
+        var res = cb(row.value, row.key);
         if (!res || typeof res !== 'object') return res;
         
         if (typeof res['first'] === 'object') {

@@ -51,7 +51,7 @@ module.exports = function (html, cb) {
         var elem = elements[row.key];
         if (!elem) return false;
         
-        var res = cb(row.value);
+        var res = cb(row.value, row.key);
         if (res) hyperglue(elem, res);
         return true;
     }
