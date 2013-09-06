@@ -29,7 +29,16 @@ module.exports = function (html, cb) {
     var dup = duplexer(hs, tracker);
     dup.appendTo = function () { return hs.appendTo.apply(hs, arguments) };
     dup.prependTo = function () { return hs.prependTo.apply(hs, arguments) };
-    dup.sortTo = function () { return hs.sortTo.apply(hs, arguments) };
+    dup.sortTo = function (target, cmp) {
+        if (cmp === undefined) cmp = function (a, b) {
+            var akey = a.getAttribute('data-key');
+            var bkey = b.getAttribute('data-key');
+            if (akey < bkey) return -1;
+            else if (akey > bkey) return 1;
+            return 0;
+        };
+        return hs.sortTo(target, cmp);
+    };
     return dup;
     
     function onstream (stream) {
