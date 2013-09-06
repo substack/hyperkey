@@ -37,12 +37,11 @@ module.exports = function (html, cb) {
     }
     
     function exists (row) {
-        var elem = elements[row.key];
-        if (!elem || !prev) return;
+        var elem = elements[JSON.stringify(row.key)];
+        if (!elem) return false;
         
-        hyperglue(elem, function () {
-            var res = cb(row.value);
-            rows[row.key] = res;
-        });
+        var res = cb(row.value);
+        if (res) hyperglue(elem, res);
+        return true;
     }
 };
