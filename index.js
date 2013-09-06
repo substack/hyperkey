@@ -3,7 +3,7 @@ var hyperspace = require('hyperspace');
 module.exports = function (html, cb, _exists) {
     return hyperspace(html, function (row) {
         if (_exists && _exists(row)) return;
-        var key = JSON.stringify(row.key);
+        var key = row.key;
         
         var res = cb(row.value);
         if (!res || typeof res !== 'object') return res;

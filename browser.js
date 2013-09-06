@@ -8,7 +8,7 @@ module.exports = function (html, cb) {
     var hs = onstream(hyperkey(html, cb, exists));
     var tracker = through();
     hs.on('key', function (key) {
-        tracker.queue(key + '\n');
+        tracker.queue(JSON.stringify(key) + '\n');
     });
     var dup = duplexer(hs, tracker);
     for (var key in hs) {
@@ -37,7 +37,7 @@ module.exports = function (html, cb) {
     }
     
     function exists (row) {
-        var elem = elements[JSON.stringify(row.key)];
+        var elem = elements[row.key];
         if (!elem) return false;
         
         var res = cb(row.value);
