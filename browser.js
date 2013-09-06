@@ -9,16 +9,27 @@ module.exports = function (html, cb) {
     var tracker = through();
     hs.on('key', function (key) {
         tracker.queue(JSON.stringify(key) + '\n');
+        dup.emit('key');
     });
+    hs.on('parent', function (root) {
+        var start = root.getAttribute('data-start');
+        var end = root.getAttribute('data-end');
+        var parts = [ start, end ];
+        var since = findSince(root, start, end);
+        if (since) parts.push(since);
+        tracker.queue(JSON.stringify(parts) + '\n');
+        
+        dup.emit('parent', root);
+    });
+    
+    hs.on('element', function (elem) {
+        dup.emit('element', elem);
+    });
+    
     var dup = duplexer(hs, tracker);
-    for (var key in hs) {
-        if (typeof hs[key] === 'function') {
-            dup[key] = (function (f) {
-                return function () { return f.apply(hs, arguments) };
-            })(hs[key]);
-        }
-        else dup[key] = hs[key];
-    }
+    dup.appendTo = function () { return hs.appendTo.apply(hs, arguments) };
+    dup.prependTo = function () { return hs.prependTo.apply(hs, arguments) };
+    dup.sortTo = function () { return hs.sortTo.apply(hs, arguments) };
     return dup;
     
     function onstream (stream) {
@@ -45,3 +56,15 @@ module.exports = function (html, cb) {
         return true;
     }
 };
+
+function findSince (root, start, end) {
+    var since = undefined;
+    for (var i = 0; i < root.childNodes.length; i++) {
+        var node = root.childNodes[i];
+        if (!node.getAttribute) continue;
+        var key = node.getAttribute('data-key');
+        if (!key) continue;
+        if (!since || key > since) since = key;
+    }
+    return since;
+}

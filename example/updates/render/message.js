@@ -1,4 +1,4 @@
-var hyperkey = require('../../');
+var hyperkey = require('../../../');
 var fs = require('fs');
 var html = fs.readFileSync(__dirname + '/message.html');
 
