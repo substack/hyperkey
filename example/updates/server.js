@@ -10,9 +10,13 @@ var render = require('./render/message.js');
 var server = http.createServer(function (req, res) {
     if (req.url === '/') {
         var tr = trumpet();
+        var messages = tr.select('#messages');
+        messages.setAttribute('data-start', 'message');
+        messages.setAttribute('data-end', 'message~');
+        
         db.createReadStream({ start: 'message', end: 'message~' })
             .pipe(render())
-            .pipe(tr.createWriteStream('#messages'))
+            .pipe(messages.createWriteStream())
         ;
         readStream('index.html').pipe(tr).pipe(res);
     }
