@@ -1,4 +1,5 @@
 var shoe = require('shoe');
 var render = require('./render/message.js')();
+var sock = shoe('/sock');
 
-shoe('/sock').pipe(render.appendTo('#messages'));
+render.pipe(sock).pipe(render.appendTo('#messages'));

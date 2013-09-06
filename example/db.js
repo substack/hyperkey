@@ -12,5 +12,6 @@ var messages = [
 setInterval(function () {
     var msg = messages[Math.floor(Math.random() * messages.length)];
     msg.time = Date.now();
-    db.put('message-' + msg.time, msg);
+    var key = 'message-' + Math.floor(Math.random() * 5);
+    db.put(key, msg);
 }, 1000);

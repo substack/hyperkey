@@ -1,19 +1,25 @@
-var hyperspace = require('hyperspace');
 var hyperglue = require('hyperglue');
 var hyperkey = require('./index.js');
 var through = require('through');
+var duplexer = require('duplexer');
 
 module.exports = function (html, cb) {
     var elements = {};
     var hs = onstream(hyperkey(html, cb, exists));
-    hs.track = function () {
-        var tr = through();
-        hs.on('key', function (key) {
-            tr.queue(key + '\n');
-        });
-        return tr;
-    };
-    return hs;
+    var tracker = through();
+    hs.on('key', function (key) {
+        tracker.queue(key + '\n');
+    });
+    var dup = duplexer(hs, tracker);
+    for (var key in hs) {
+        if (typeof hs[key] === 'function') {
+            dup[key] = (function (f) {
+                return function () { return f.apply(hs, arguments) };
+            })(hs[key]);
+        }
+        else dup[key] = hs[key];
+    }
+    return dup;
     
     function onstream (stream) {
         stream.on('element', function (elem) {
