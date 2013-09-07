@@ -3,12 +3,13 @@ var render = require('./render/hackerspace.js')();
 var sock = shoe('/sock');
 var parse = require('level-assoc/parse');
 
-var trace = require('through')(function (row) {
-    console.log('TRACE', row);
-    this.queue(row);
+var through = require('through');
+var hacker = require('./render/hacker.js');
+
+var streams = { hackerspace: {} };
+[].forEach.call(document.querySelectorAll('.hackerspace'), function (elem) {
+    var key = elem.querySelector('.name').textContent;
+    streams.hackerspace[key] = hacker().appendTo(elem);
 });
-var p = parse();
-p.on('data', function (row) {
-    console.log(row);
-});
-render.pipe(sock).pipe(trace).pipe(p).pipe(render.sortTo('#hackerspaces'));
+
+render.pipe(sock).pipe(parse()).pipe(render.sortTo('#hackerspaces'));

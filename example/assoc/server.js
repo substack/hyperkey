@@ -3,14 +3,13 @@ var ecstatic = require('ecstatic')(__dirname + '/static');
 var trumpet = require('trumpet');
 var fs = require('fs');
 
-var data = require('./data.js');
-var tracker = require('level-track')(data.assoc.sublevel);
+var assoc = require('./data.js');
 var render = require('./render/hackerspace.js');
 
 var server = http.createServer(function (req, res) {
     if (req.url === '/') {
         var tr = trumpet();
-        var q = data.assoc.list('hackerspace');
+        var q = assoc.list('hackerspace');
         
         var elem = tr.select('#hackerspaces');
         elem.setAttribute('data-start', q.startKey);
@@ -25,7 +24,7 @@ server.listen(5000);
 
 var shoe = require('shoe');
 var sock = shoe(function (stream) {
-    stream.pipe(tracker()).pipe(stream);
+    stream.pipe(assoc.track()).pipe(stream);
 });
 sock.install(server, '/sock');
 

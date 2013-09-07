@@ -15,8 +15,7 @@ assoc.add('tool')
     .hasMany('usage', [ 'type', 'usage' ])
 ;
 
-exports.db = db;
-exports.assoc = assoc;
+module.exports = assoc;
 
 var rows = require('./data.json');
 var spaces = rows.map(function (row) {
