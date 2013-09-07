@@ -67,7 +67,7 @@ var fs = require('fs');
 
 var sub = require('level-sublevel');
 var level = require('level');
-var db = sub(level('test.db'));
+var db = sub(level('test.db', { valueEncoding: 'json' }));
 
 var tracker = require('level-track')(db);
 var render = require('./render/message.js');
