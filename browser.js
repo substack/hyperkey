@@ -44,9 +44,7 @@ module.exports = function (html, cb) {
         };
         return hs.sortTo(target, cmp);
     };
-    dup.pause();
-    setTimeout(function () { dup.resume() }, 100);
-    return dup;
+    return pauseResumeHack(dup);
     
     function onstream (stream) {
         stream.on('element', function (elem) {
@@ -106,4 +104,27 @@ function findSince (root, start, end) {
         if (!since || key > since) since = key;
     }
     return since;
+}
+
+function pauseResumeHack (stream) {
+    var pause = stream.pause;
+    var resume = stream.resume;
+    pause();
+    
+    var paused = false;
+    stream.pause = function () {
+        paused = true;
+        return pause.call(this);
+    };
+    stream.resume = function () {
+        paused = false;
+        return resume.call(this);
+    };
+    
+    process.nextTick(function () {
+        stream.pause = pause;
+        stream.resume = resume;
+        if (!paused) stream.resume();
+    });
+    return stream;
 }
