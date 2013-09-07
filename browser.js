@@ -26,6 +26,7 @@ module.exports = function (html, cb) {
     });
     
     var dup = duplexer(hs, tracker);
+     
     dup.appendTo = function () {
         return hs.appendTo.apply(hs, arguments);
     };
@@ -44,7 +45,7 @@ module.exports = function (html, cb) {
         };
         return hs.sortTo(target, cmp);
     };
-    return pauseResumeHack(dup);
+    return dup;
     
     function onstream (stream) {
         stream.on('element', function (elem) {
@@ -91,26 +92,3 @@ module.exports = function (html, cb) {
         trackNested(elem);
     }
 };
-
-function pauseResumeHack (stream) {
-    var pause = stream.pause;
-    var resume = stream.resume;
-    pause();
-    
-    var paused = false;
-    stream.pause = function () {
-        paused = true;
-        return pause.call(this);
-    };
-    stream.resume = function () {
-        paused = false;
-        return resume.call(this);
-    };
-    
-    process.nextTick(function () {
-        stream.pause = pause;
-        stream.resume = resume;
-        if (!paused) stream.resume();
-    });
-    return stream;
-}
