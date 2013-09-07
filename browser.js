@@ -20,9 +20,9 @@ module.exports = function (html, cb) {
     
     hs.on('element', function (elem) {
         trackElement(elem);
-        setTimeout(function () {
+        process.nextTick(function () {
             dup.emit('element', elem);
-        }, 0);
+        });
     });
     
     var dup = duplexer(hs, tracker);
