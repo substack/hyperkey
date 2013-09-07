@@ -24,8 +24,14 @@ module.exports = function (html, cb) {
     });
     
     var dup = duplexer(hs, tracker);
-    dup.appendTo = function () { return hs.appendTo.apply(hs, arguments) };
-    dup.prependTo = function () { return hs.prependTo.apply(hs, arguments) };
+    dup.appendTo = function () {
+        return hs.appendTo.apply(hs, arguments);
+    };
+    
+    dup.prependTo = function () {
+        return hs.prependTo.apply(hs, arguments);
+    };
+    
     dup.sortTo = function (target, cmp) {
         if (cmp === undefined) cmp = function (a, b) {
             var akey = a.getAttribute('data-key');

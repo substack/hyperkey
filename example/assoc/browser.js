@@ -12,10 +12,6 @@ var streams = { hackerspace: {} };
     streams.hackerspace[key] = hacker().appendTo(elem);
 });
 
-render.on('stream', function (stream) {
-    console.log('STREAM=', stream);
-});
-
 render.pipe(sock).pipe(parse()).pipe(typeSieve({
     hackerspace: render.sortTo('#hackerspaces')
 }));
