@@ -20,7 +20,9 @@ module.exports = function (html, cb) {
     
     hs.on('element', function (elem) {
         trackElement(elem);
-        dup.emit('element', elem);
+        setTimeout(function () {
+            dup.emit('element', elem);
+        }, 0);
     });
     
     var dup = duplexer(hs, tracker);
@@ -42,6 +44,8 @@ module.exports = function (html, cb) {
         };
         return hs.sortTo(target, cmp);
     };
+    dup.pause();
+    setTimeout(function () { dup.resume() }, 100);
     return dup;
     
     function onstream (stream) {
