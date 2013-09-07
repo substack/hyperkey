@@ -4,7 +4,7 @@ var trumpet = require('trumpet');
 var fs = require('fs');
 
 var data = require('./data.js');
-var tracker = require('level-track')(data.db);
+var tracker = require('level-track')(data.assoc.sublevel);
 var render = require('./render/hackerspace.js');
 
 var server = http.createServer(function (req, res) {

@@ -7,22 +7,19 @@ module.exports = function (html, cb) {
     var elements = {};
     var hs = onstream(hyperkey(html, cb, exists));
     var tracker = through();
+    var tracking = {};
+    
     hs.on('key', function (key) {
         tracker.queue(JSON.stringify(key) + '\n');
         dup.emit('key');
     });
     hs.on('parent', function (root) {
-        var start = root.getAttribute('data-start');
-        var end = root.getAttribute('data-end');
-        var parts = [ start, end ];
-        var since = findSince(root, start, end);
-        if (since) parts.push(since);
-        tracker.queue(JSON.stringify(parts) + '\n');
-        
+        trackElement(root);
         dup.emit('parent', root);
     });
     
     hs.on('element', function (elem) {
+        trackElement(elem);
         dup.emit('element', elem);
     });
     
@@ -63,6 +60,29 @@ module.exports = function (html, cb) {
         var res = cb(row.value, row.key);
         if (res) hyperglue(elem, res);
         return true;
+    }
+    
+    function trackNested (root) {
+        var nodes = document.querySelectorAll('*[data-start]');
+        for (var i = 0; i < nodes.length; i++) {
+            trackElement(nodes[i]);
+        }
+    }
+    
+    function trackElement (elem) {
+        var start = elem.getAttribute('data-start');
+        var end = elem.getAttribute('data-end');
+        
+        if (!start || !end) return;
+        var parts = [ start, end ];
+        var s = JSON.stringify(parts);
+        if (tracking[s]) return;
+        tracking[s] = true;
+        
+        //var since = findSince(elem, start, end);
+        //if (since) parts.push(since);
+        tracker.queue(s + '\n');
+        trackNested(elem);
     }
 };
 
