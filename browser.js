@@ -87,24 +87,10 @@ module.exports = function (html, cb) {
         if (tracking[s]) return;
         tracking[s] = true;
         
-        //var since = findSince(elem, start, end);
-        //if (since) parts.push(since);
         tracker.queue(s + '\n');
         trackNested(elem);
     }
 };
-
-function findSince (root, start, end) {
-    var since = undefined;
-    for (var i = 0; i < root.childNodes.length; i++) {
-        var node = root.childNodes[i];
-        if (!node.getAttribute) continue;
-        var key = node.getAttribute('data-key');
-        if (!key) continue;
-        if (!since || key > since) since = key;
-    }
-    return since;
-}
 
 function pauseResumeHack (stream) {
     var pause = stream.pause;
