@@ -12,4 +12,22 @@ var streams = { hackerspace: {} };
     streams.hackerspace[key] = hacker().appendTo(elem);
 });
 
-render.pipe(sock).pipe(parse()).pipe(render.sortTo('#hackerspaces'));
+render.on('stream', function (stream) {
+    console.log('STREAM=', stream);
+});
+
+render.pipe(sock).pipe(parse()).pipe(typeSieve({
+    hackerspace: render.sortTo('#hackerspaces')
+}));
+
+function typeSieve (types) {
+    return through(function (row) {
+        var t = row.value.type;
+        if (t === 'hackerspace') {
+            types[t].write(row);
+        }
+        else if (t === 'hacker') {
+            streams.hackerspace[row.value.hackerspace].write(row);
+        }
+    });
+}
