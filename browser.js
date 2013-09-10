@@ -82,13 +82,13 @@ module.exports = function (html, cb) {
         var start = elem.getAttribute('data-start');
         var end = elem.getAttribute('data-end');
         
-        if (!start || !end) return;
-        var parts = [ start, end ];
-        var s = JSON.stringify(parts);
-        if (tracking[s]) return;
-        tracking[s] = true;
-        
-        tracker.queue(s + '\n');
+        if (start && end) {
+            var parts = [ start, end ];
+            var s = JSON.stringify(parts);
+            if (tracking[s]) return;
+            tracking[s] = true;
+            tracker.queue(s + '\n');
+        }
         trackNested(elem);
     }
 };
