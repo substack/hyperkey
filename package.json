@@ -1,6 +1,6 @@
 {
   "name": "hyperkey",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "shared server+client rendering with live updates for key/value stores",
   "main": "main.js",
   "browser": "browser.js",
