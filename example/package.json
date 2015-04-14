@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "start": "npm run build && node server.js",
+    "build": "browserify -t brfs browser.js > static/bundle.js -d"
+  },
+  "dependencies": {
+    "ecstatic": "^0.7.3",
+    "level-live-stream": "^1.4.9",
+    "level-sublevel": "^6.4.6",
+    "level-test": "^1.7.0",
+    "shoe": "0.0.15",
+    "trumpet": "^1.7.1"
+  },
+  "devDependencies": {
+    "brfs": "^1.4.0"
+  }
+}
